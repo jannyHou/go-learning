@@ -1,13 +1,13 @@
 package main
 
 import (
-	"examples/go-learning/io"
-	"examples/go-learning/wg"
+	"examples/go-learning/basic"
 	"fmt"
 )
 
 func main() {
 	fmt.Println("==========  Go learning projects.  ==========")
-	io.IOTest()
-	wg.WgTest()
+	// io.IOTest()
+	// wg.WgTest()
+	basic.TestLoopBreak()
 }
