@@ -1,7 +1,7 @@
 package main
 
 import (
-	"examples/go-learning/generic"
+	"examples/go-learning/concurrency"
 	"fmt"
 )
 
@@ -11,5 +11,6 @@ func main() {
 	// wg.WgTest()
 	// basic.TestLoopBreak()
 	// wg.WgCase2()
-	generic.TestStack()
+	// generic.TestStack()
+	concurrency.TestPipeline()
 }
