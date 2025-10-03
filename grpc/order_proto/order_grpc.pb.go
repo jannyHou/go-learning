@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	OrderService_CreateOrder_FullMethodName = "/grpc.OrderService/CreateOrder"
 	OrderService_GetOrder_FullMethodName    = "/grpc.OrderService/GetOrder"
+	OrderService_Communicate_FullMethodName = "/grpc.OrderService/Communicate"
 )
 
 // OrderServiceClient is the client API for OrderService service.
@@ -29,6 +30,7 @@ const (
 type OrderServiceClient interface {
 	CreateOrder(ctx context.Context, in *Order, opts ...grpc.CallOption) (*Order, error)
 	GetOrder(ctx context.Context, in *Order, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Order], error)
+	Communicate(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[Orders, Orders], error)
 }
 
 type orderServiceClient struct {
@@ -68,12 +70,26 @@ func (c *orderServiceClient) GetOrder(ctx context.Context, in *Order, opts ...gr
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type OrderService_GetOrderClient = grpc.ServerStreamingClient[Order]
 
+func (c *orderServiceClient) Communicate(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[Orders, Orders], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &OrderService_ServiceDesc.Streams[1], OrderService_Communicate_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[Orders, Orders]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type OrderService_CommunicateClient = grpc.BidiStreamingClient[Orders, Orders]
+
 // OrderServiceServer is the server API for OrderService service.
 // All implementations must embed UnimplementedOrderServiceServer
 // for forward compatibility.
 type OrderServiceServer interface {
 	CreateOrder(context.Context, *Order) (*Order, error)
 	GetOrder(*Order, grpc.ServerStreamingServer[Order]) error
+	Communicate(grpc.BidiStreamingServer[Orders, Orders]) error
 	mustEmbedUnimplementedOrderServiceServer()
 }
 
@@ -89,6 +105,9 @@ func (UnimplementedOrderServiceServer) CreateOrder(context.Context, *Order) (*Or
 }
 func (UnimplementedOrderServiceServer) GetOrder(*Order, grpc.ServerStreamingServer[Order]) error {
 	return status.Errorf(codes.Unimplemented, "method GetOrder not implemented")
+}
+func (UnimplementedOrderServiceServer) Communicate(grpc.BidiStreamingServer[Orders, Orders]) error {
+	return status.Errorf(codes.Unimplemented, "method Communicate not implemented")
 }
 func (UnimplementedOrderServiceServer) mustEmbedUnimplementedOrderServiceServer() {}
 func (UnimplementedOrderServiceServer) testEmbeddedByValue()                      {}
@@ -140,6 +159,13 @@ func _OrderService_GetOrder_Handler(srv interface{}, stream grpc.ServerStream) e
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type OrderService_GetOrderServer = grpc.ServerStreamingServer[Order]
 
+func _OrderService_Communicate_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(OrderServiceServer).Communicate(&grpc.GenericServerStream[Orders, Orders]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type OrderService_CommunicateServer = grpc.BidiStreamingServer[Orders, Orders]
+
 // OrderService_ServiceDesc is the grpc.ServiceDesc for OrderService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -157,6 +183,12 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 			StreamName:    "GetOrder",
 			Handler:       _OrderService_GetOrder_Handler,
 			ServerStreams: true,
+		},
+		{
+			StreamName:    "Communicate",
+			Handler:       _OrderService_Communicate_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
 		},
 	},
 	Metadata: "order.proto",

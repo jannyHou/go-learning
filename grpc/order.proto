@@ -5,10 +5,15 @@ option go_package="examples/go-learning/grpc";
 service OrderService {
     rpc CreateOrder(Order) returns (Order) {}
     rpc GetOrder(Order) returns (stream Order) {}
+    rpc Communicate(stream Orders) returns (stream Orders) {}
 }
 
 message Order {
     int32 id=1;
     string food=2;
     int32 payment=3;
+}
+
+message Orders {
+    repeated Order orders =1;
 }

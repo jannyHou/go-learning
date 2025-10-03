@@ -81,6 +81,50 @@ func (x *Order) GetPayment() int32 {
 	return 0
 }
 
+type Orders struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Orders        []*Order               `protobuf:"bytes,1,rep,name=orders,proto3" json:"orders,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Orders) Reset() {
+	*x = Orders{}
+	mi := &file_order_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Orders) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Orders) ProtoMessage() {}
+
+func (x *Orders) ProtoReflect() protoreflect.Message {
+	mi := &file_order_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Orders.ProtoReflect.Descriptor instead.
+func (*Orders) Descriptor() ([]byte, []int) {
+	return file_order_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *Orders) GetOrders() []*Order {
+	if x != nil {
+		return x.Orders
+	}
+	return nil
+}
+
 var File_order_proto protoreflect.FileDescriptor
 
 const file_order_proto_rawDesc = "" +
@@ -89,10 +133,13 @@ const file_order_proto_rawDesc = "" +
 	"\x05Order\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x12\n" +
 	"\x04food\x18\x02 \x01(\tR\x04food\x12\x18\n" +
-	"\apayment\x18\x03 \x01(\x05R\apayment2c\n" +
+	"\apayment\x18\x03 \x01(\x05R\apayment\"-\n" +
+	"\x06Orders\x12#\n" +
+	"\x06orders\x18\x01 \x03(\v2\v.grpc.OrderR\x06orders2\x94\x01\n" +
 	"\fOrderService\x12)\n" +
 	"\vCreateOrder\x12\v.grpc.Order\x1a\v.grpc.Order\"\x00\x12(\n" +
-	"\bGetOrder\x12\v.grpc.Order\x1a\v.grpc.Order\"\x000\x01B\x1bZ\x19examples/go-learning/grpcb\x06proto3"
+	"\bGetOrder\x12\v.grpc.Order\x1a\v.grpc.Order\"\x000\x01\x12/\n" +
+	"\vCommunicate\x12\f.grpc.Orders\x1a\f.grpc.Orders\"\x00(\x010\x01B\x1bZ\x19examples/go-learning/grpcb\x06proto3"
 
 var (
 	file_order_proto_rawDescOnce sync.Once
@@ -106,20 +153,24 @@ func file_order_proto_rawDescGZIP() []byte {
 	return file_order_proto_rawDescData
 }
 
-var file_order_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_order_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_order_proto_goTypes = []any{
-	(*Order)(nil), // 0: grpc.Order
+	(*Order)(nil),  // 0: grpc.Order
+	(*Orders)(nil), // 1: grpc.Orders
 }
 var file_order_proto_depIdxs = []int32{
-	0, // 0: grpc.OrderService.CreateOrder:input_type -> grpc.Order
-	0, // 1: grpc.OrderService.GetOrder:input_type -> grpc.Order
-	0, // 2: grpc.OrderService.CreateOrder:output_type -> grpc.Order
-	0, // 3: grpc.OrderService.GetOrder:output_type -> grpc.Order
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0, // 0: grpc.Orders.orders:type_name -> grpc.Order
+	0, // 1: grpc.OrderService.CreateOrder:input_type -> grpc.Order
+	0, // 2: grpc.OrderService.GetOrder:input_type -> grpc.Order
+	1, // 3: grpc.OrderService.Communicate:input_type -> grpc.Orders
+	0, // 4: grpc.OrderService.CreateOrder:output_type -> grpc.Order
+	0, // 5: grpc.OrderService.GetOrder:output_type -> grpc.Order
+	1, // 6: grpc.OrderService.Communicate:output_type -> grpc.Orders
+	4, // [4:7] is the sub-list for method output_type
+	1, // [1:4] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_order_proto_init() }
@@ -133,7 +184,7 @@ func file_order_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_order_proto_rawDesc), len(file_order_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   1,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

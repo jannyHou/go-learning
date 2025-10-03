@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	pb "examples/go-learning/grpc/order_proto"
+	"fmt"
+	"io"
 	"log"
 	"net"
 
@@ -21,6 +23,37 @@ func (s *server) GetOrder(order *pb.Order, srv grpc.ServerStreamingServer[pb.Ord
 	srv.Send(order)
 	return nil
 }
+
+func (s *server) Communicate(srv grpc.BidiStreamingServer[pb.Orders, pb.Orders]) error {
+	var result []*pb.Orders
+	var count int
+
+	for {
+		orders, err := srv.Recv()
+		if err == io.EOF {
+			fmt.Printf("Communicate result is: %v", result)
+			break
+		}
+
+		if err != nil {
+			log.Fatal("Err receiving orders from client: %v", err)
+		}
+
+		fmt.Printf("Communicate received orders: %v", orders)
+		fmt.Println()
+		result = append(result, orders)
+
+		count++
+		if count%3 == 0 {
+			err := srv.Send(orders)
+			if err != nil {
+				log.Fatal("Err sending orders to client: %v", err)
+			}
+		}
+	}
+	return nil
+}
+
 func main() {
 	lis, err := net.Listen("tcp", ":9001")
 
